@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Pedidos - Consulta de Ordens</title>
+    <link rel="stylesheet" href="consulta.css">
+</head>
+<body>
+    <!-- Cabeçalho com logo -->
+    <header class="header-top">
+        <div class="header-logo">
+            <h1>Fasi<span>comércio</span></h1>
+        </div>
+    </header>
+
+    <!-- Layout principal -->
+    <div class="main-layout">
+        <!-- Menu lateral -->
+        <aside class="sidebar">
+            <nav class="sidebar-menu">
+                <a href="aprovacao.html" class="menu-item">Controle de Pedidos</a>
+                <a href="#" class="menu-item active">Pedidos Aprovados</a>
+            </nav>
+        </aside>
+
+        <!-- Área de conteúdo -->
+        <main class="content-area">
+            <div class="page-header">
+                <h1>🔍 Consulta de Ordens de Compra</h1>
+                <p>Consulte e acompanhe todas as ordens de compra do sistema</p>
+            </div>
+
+            <div class="filters">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="idPedido">ID do Pedido:</label>
+                        <input type="text" id="idPedido" name="idPedido" 
+                               placeholder="Ex: PED-3-20250923-001">
+                    </div>
+                    <div class="filter-group">
+                        <label for="produto">Produto:</label>
+                        <input type="text" id="produto" name="produto" 
+                               placeholder="Nome do produto...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="fornecedor">Fornecedor:</label>
+                        <input type="text" id="fornecedor" name="fornecedor" 
+                               placeholder="Nome do fornecedor...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="status">Status:</label>
+                        <select id="status" name="status">
+                            <option value="">Todos</option>
+                            <option value="PENDENTE">Pendente</option>
+                            <option value="APROVADO">Aprovado</option>
+                            <option value="REPROVADO">Reprovado</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="dataInicio">Data Início:</label>
+                        <input type="date" id="dataInicio" name="dataInicio">
+                    </div>
+                    <div class="filter-group">
+                        <label for="dataFim">Data Fim:</label>
+                        <input type="date" id="dataFim" name="dataFim">
+                    </div>
+                    <div style="margin-left: auto; display: flex; gap: 10px;">
+                        <button type="button" id="limparFiltros" class="btn-secondary">
+                            🗑️ Limpar
+                        </button>
+                        <button type="button" id="consultarBtn" class="btn-primary">
+                            🔍 Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loadingDiv" class="loading" style="display: none;">
+                Carregando ordens de compra...
+            </div>
+
+            <div id="errorDiv" class="error" style="display: none;"></div>
+
+            <div id="resultsDiv" class="results-container" style="display: none;">
+                <div class="results-header">
+                    <div class="results-count" id="resultsCount">
+                        0 ordens encontradas
+                    </div>
+                    <div>
+                        <small id="lastUpdate"></small>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAllCheckbox" title="Selecionar todos os aprovados">
+                                </th>
+                                <th>ID do Pedido</th>
+                                <th>ID do Orçamento</th>
+                                <th>Produto</th>
+                                <th>Fornecedor</th>
+                                <th>Data de Emissão</th>
+                                <th>Valor Total</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="export-section">
+                    <button type="button" id="exportPdfBtn" class="btn-export" disabled>
+                        📄 Exportar ZIP
+                    </button>
+                </div>
+            </div>
+
+            <div id="noResultsDiv" class="results-container" style="display: none;">
+                <div class="no-results">
+                    📋 Nenhuma ordem de compra encontrada com os filtros aplicados.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="consulta.js"></script>
+</body>
+</html>
