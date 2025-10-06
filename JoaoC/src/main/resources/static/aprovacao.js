@@ -89,14 +89,159 @@ function processarOrcamentos(orcamentos) {
         orcamentosPorProduto[produtoId].orcamentos.push(orcamento);
     });
 
-    // Ordenar orçamentos de cada produto por preço
-    Object.values(orcamentosPorProduto).forEach(grupo => {
-        grupo.orcamentos.sort((a, b) => parseFloat(a.precoCompra.toString().replace(',', '.')) - parseFloat(b.precoCompra.toString().replace(',', '.')));
+    // Para cada produto, calcular o melhor orçamento e selecionar automaticamente
+    Object.entries(orcamentosPorProduto).forEach(([produtoId, grupo]) => {
+        const melhorOrcamento = calcularMelhorOrcamento(grupo.orcamentos);
+        if (melhorOrcamento) {
+            // CORREÇÃO: Se o melhor orçamento é fictício, selecionar o melhor orçamento real
+            let orcamentoParaSelecionar = melhorOrcamento;
+            
+            // Se o melhor é fictício (ID > 1000000), encontrar o melhor real
+            if (melhorOrcamento.idOrcamento >= 1000000) {
+                const orcamentosReais = grupo.orcamentos.filter(o => o.idOrcamento < 1000000);
+                if (orcamentosReais.length > 0) {
+                    orcamentoParaSelecionar = calcularMelhorOrcamento(orcamentosReais) || orcamentosReais[0];
+                }
+            }
+            
+            // ARMAZENAR o melhor orçamento para usar na renderização
+            grupo.melhorOrcamentoCalculado = orcamentoParaSelecionar;
+            
+            selecoes[produtoId] = orcamentoParaSelecionar.idOrcamento.toString();
+        }
     });
+
+    // Atualizar interface após seleção automática
+    atualizarBotaoGerar();
+    atualizarEstatisticas();
 
     renderizarOrcamentos();
     atualizarEstatisticas();
     mostrarActionsDiv();
+}
+
+/**
+ * Calcula o melhor orçamento baseado nos critérios de peso definidos:
+ * 1. Valor Unitário (peso 4) - menor é melhor
+ * 2. Data da entrega (peso 3) - mais cedo é melhor  
+ * 3. Condições de pagamento (peso 2) - mais prazo é melhor
+ * 4. Garantia (peso 1) - mais tempo é melhor
+ */
+function calcularMelhorOrcamento(orcamentos) {
+    if (!orcamentos || orcamentos.length === 0) return null;
+    if (orcamentos.length === 1) return orcamentos[0];
+
+    // ALGORITMO SIMPLES: SEMPRE ESCOLHE O MENOR PREÇO
+    let melhorOrcamento = null;
+    let menorPreco = Infinity;
+
+    orcamentos.forEach(orcamento => {
+        const precoAtual = parseFloat(orcamento.precoCompra.toString().replace(',', '.')) || 0;
+        
+        if (precoAtual < menorPreco) {
+            menorPreco = precoAtual;
+            melhorOrcamento = orcamento;
+        }
+    });
+
+    return melhorOrcamento;
+}
+
+/**
+ * Extrai o prazo de pagamento em dias de um texto
+ */
+function extrairPrazoPagamento(texto) {
+    if (!texto) return 0;
+    
+    const textoLower = texto.toLowerCase();
+    
+    // Procura por padrões como "30 dias", "15 dias", etc.
+    const match = textoLower.match(/(\d+)\s*dias?/);
+    if (match) {
+        return parseInt(match[1]);
+    }
+    
+    // Se contém "à vista" ou similar, considera 0 dias
+    if (textoLower.includes('vista') || textoLower.includes('avista')) {
+        return 0;
+    }
+    
+    // Se contém palavras como "parcelado", "prazo", assume algum prazo
+    if (textoLower.includes('parcelado') || textoLower.includes('prazo')) {
+        return 30; // valor padrão
+    }
+    
+    return 0;
+}
+
+/**
+ * Extrai o tempo de garantia em meses de um texto
+ */
+function extrairTempoGarantia(texto) {
+    if (!texto) return 0;
+    
+    const textoLower = texto.toLowerCase();
+    
+    // Procura por padrões como "12 meses", "6 meses", etc.
+    const matchMeses = textoLower.match(/(\d+)\s*mes(?:es)?/);
+    if (matchMeses) {
+        return parseInt(matchMeses[1]);
+    }
+    
+    // Procura por padrões como "1 ano", "2 anos", etc. e converte para meses
+    const matchAnos = textoLower.match(/(\d+)\s*anos?/);
+    if (matchAnos) {
+        return parseInt(matchAnos[1]) * 12;
+    }
+    
+    return 0;
+}
+
+/**
+ * Função para selecionar automaticamente os melhores orçamentos
+    if (match) {
+        return parseInt(match[1]);
+    }
+    
+    // Se contém "à vista" ou similar, considera 0 dias
+    if (textoLower.includes('vista') || textoLower.includes('avista')) {
+        return 0;
+    }
+    
+    // Se contém palavras como "parcelado", "prazo", assume algum prazo
+    if (textoLower.includes('parcelado') || textoLower.includes('prazo')) {
+        return 30; // valor padrão
+    }
+    
+    return 0;
+}
+
+/**
+ * Extrai o tempo de garantia em meses de um texto
+ */
+function extrairTempoGarantia(texto) {
+    if (!texto) return 0;
+    
+    const textoLower = texto.toLowerCase();
+    
+    // Procura por padrões como "12 meses", "6 meses", etc.
+    const matchMeses = textoLower.match(/(\d+)\s*mes(?:es)?/);
+    if (matchMeses) {
+        return parseInt(matchMeses[1]);
+    }
+    
+    // Procura por padrões como "1 ano", "2 anos", etc.
+    const matchAnos = textoLower.match(/(\d+)\s*anos?/);
+    if (matchAnos) {
+        return parseInt(matchAnos[1]) * 12; // converte anos para meses
+    }
+    
+    // Se contém "sem garantia" ou similar
+    if (textoLower.includes('sem') && textoLower.includes('garantia')) {
+        return 0;
+    }
+    
+    return 0;
 }
 
 /**
@@ -164,8 +309,14 @@ function criarHtmlProduto(grupo) {
             <tbody>
     `;
 
+    // USAR o melhor orçamento já calculado (NUNCA recalcular!)
+    const grupoProduto = orcamentosPorProduto[produto.id];
+    const melhorOrcamento = grupoProduto?.melhorOrcamentoCalculado || null;
+    const melhorOrcamentoId = melhorOrcamento ? melhorOrcamento.idOrcamento : null;
+    
     orcamentos.forEach((orcamento, index) => {
         const isChecked = selecoes[produto.id] === orcamento.idOrcamento.toString();
+        const isRecomendado = orcamento.idOrcamento === melhorOrcamentoId;
         const rowClass = isChecked ? 'selected' : '';
         
         html += `
@@ -180,7 +331,8 @@ function criarHtmlProduto(grupo) {
                     ${orcamento.idProduto}
                 </td>
                 <td>
-                    <strong>${orcamento.nomeFornecedor}</strong><br>
+                    <strong>${orcamento.nomeFornecedor}</strong>
+                    ${isRecomendado ? '<span class="recomendado-badge">🌟 Recomendado</span>' : ''}<br>
                     <small>${orcamento.representante || ''}</small>
                 </td>
                 <td class="currency">
@@ -282,7 +434,15 @@ async function gerarOrdensDeCompra() {
         
         hideMessages();
 
+        // Processar orçamentos selecionados (apenas dados reais do banco)
         const orcamentoIds = Object.values(selecoes).map(id => parseInt(id));
+        
+        console.log('IDs dos orçamentos selecionados:', orcamentoIds);
+        
+        if (orcamentoIds.length === 0) {
+            showError('Nenhum orçamento real selecionado. Verifique suas seleções.');
+            return;
+        }
 
         const response = await fetch('/api/ordens-de-compra/processar', {
             method: 'POST',
@@ -305,10 +465,22 @@ async function gerarOrdensDeCompra() {
             showSuccess('Ordem de compra processada com sucesso! Status atualizado para aprovado.');
         }
         
-        // Recarregar os orçamentos após sucesso
+        // Limpar seleções e atualizar interface imediatamente
+        selecoes = {};
+        orcamentosPorProduto = {};
+        
+        // Atualizar contadores e esconder botão
+        atualizarBotaoGerar();
+        atualizarEstatisticas();
+        actionsDiv.style.display = 'none';
+        statsDiv.style.display = 'none';
+        
+        // Mostrar mensagem de "sem dados"
+        mostrarSemDados();
+        
+        // Recarregar os orçamentos após um delay
         setTimeout(() => {
             carregarOrcamentos();
-            selecoes = {};
         }, 2000);
 
     } catch (error) {

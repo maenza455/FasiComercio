@@ -17,7 +17,7 @@ public class PortConfigurationCustomizer implements WebServerFactoryCustomizer<C
         System.out.println("===========================================");
         System.out.println("🚀 FASICLIN COMPRAS - SISTEMA INICIADO");
         System.out.println("🌐 Aplicação disponível em: http://localhost:" + port);
-        System.out.println("📋 Interface: http://localhost:" + port + "/consulta.html");
+        System.out.println("📋 Interface: http://localhost:" + port + "/aprovacao.html");
         System.out.println("🔧 API Base: http://localhost:" + port + "/api/");
         System.out.println("===========================================");
     }

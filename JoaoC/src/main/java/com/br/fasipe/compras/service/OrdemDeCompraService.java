@@ -35,21 +35,78 @@ public class OrdemDeCompraService {
 
     public List<OrcamentoDTO> buscarOrcamentosPendentes() {
         List<Orcamento> orcamentos = orcamentoRepository.findByStatusPendente();
-        return orcamentos.stream()
+        List<OrcamentoDTO> orcamentosDTOs = orcamentos.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+        
+
+        
+        // Consolidar orçamentos duplicados (mesmo produto, fornecedor, valor, data, garantia)
+        return consolidarOrcamentosDuplicados(orcamentosDTOs);
     }
+    
+    /**
+     * Consolida orçamentos duplicados somando quantidades e recalculando valor total
+     * Mantém separados apenas quando há diferenças em: valor unitário, data entrega, garantia, condições pagamento
+     */
+    private List<OrcamentoDTO> consolidarOrcamentosDuplicados(List<OrcamentoDTO> orcamentos) {
+        Map<String, OrcamentoDTO> orcamentosConsolidados = new LinkedHashMap<>();
+        
+        for (OrcamentoDTO orcamento : orcamentos) {
+            // Criar chave única baseada nos campos que devem ser idênticos para consolidação
+            String chave = criarChaveConsolidacao(orcamento);
+            
+            if (orcamentosConsolidados.containsKey(chave)) {
+                // Já existe um orçamento com as mesmas características - somar quantidades
+                OrcamentoDTO existente = orcamentosConsolidados.get(chave);
+                int novaQuantidade = existente.getQuantidade() + orcamento.getQuantidade();
+                existente.setQuantidade(novaQuantidade);
+                
+                // O valor total será recalculado automaticamente pelo getValorTotal()
+                System.out.println("🔄 Consolidando orçamento ID " + orcamento.getIdOrcamento() + 
+                                 " com ID " + existente.getIdOrcamento() + 
+                                 " - Nova quantidade: " + novaQuantidade);
+            } else {
+                // Primeiro orçamento com essas características
+                orcamentosConsolidados.put(chave, orcamento);
+            }
+        }
+        
+        return new ArrayList<>(orcamentosConsolidados.values());
+    }
+    
+    /**
+     * Cria chave única para identificar orçamentos que podem ser consolidados
+     * Baseia-se em: produto, fornecedor, preço unitário, data entrega, garantia, condições pagamento
+     */
+    private String criarChaveConsolidacao(OrcamentoDTO orcamento) {
+        return String.format("%d|%s|%s|%s|%s|%s", 
+            orcamento.getIdProduto(),
+            orcamento.getNomeFornecedor() != null ? orcamento.getNomeFornecedor() : "",
+            orcamento.getPrecoCompra() != null ? orcamento.getPrecoCompra().toString() : "0",
+            orcamento.getDataEntrega() != null ? orcamento.getDataEntrega().toString() : "",
+            orcamento.getGarantia() != null ? orcamento.getGarantia() : "",
+            orcamento.getCondicoesPagamento() != null ? orcamento.getCondicoesPagamento() : ""
+        );
+    }
+
 
     @Transactional
     public void processarStatus(List<Long> orcamentoIdsAprovados) {
         if (orcamentoIdsAprovados == null || orcamentoIdsAprovados.isEmpty()) {
             return;
         }
+        
+        System.out.println("✅ Processando orçamentos: " + orcamentoIdsAprovados);
+        
         Usuario usuarioPadrao = obterUsuarioPadrao();
         List<Orcamento> orcamentosAprovados = orcamentoRepository.findAllById(orcamentoIdsAprovados);
         if (orcamentosAprovados.isEmpty()) {
+            System.out.println("❌ Nenhum orçamento encontrado no banco para os IDs: " + orcamentoIdsAprovados);
             return;
         }
+        
+        System.out.println("✅ Encontrados " + orcamentosAprovados.size() + " orçamentos no banco");
         Set<Integer> produtoIds = orcamentosAprovados.stream()
                 .map(orcamento -> orcamento.getProduto().getId())
                 .collect(Collectors.toSet());
