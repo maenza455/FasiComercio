@@ -376,3 +376,124 @@ body {
         padding: 20px 15px;
     }
 }
+
+/* Análise Temporal - Alertas */
+.analise-temporal {
+    margin: 15px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.analise-temporal.alerta {
+    background: #fff5f5;
+    border-left-color: #dc3545;
+    animation: pulse-red 2s infinite;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+}
+
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+.analise-temporal h5 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.analise-temporal.alerta h5 {
+    color: #dc3545;
+}
+
+.metricas-temporais {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.metrica {
+    padding: 8px 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: #495057;
+}
+
+.metrica.alerta {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+    font-weight: bold;
+    animation: blink-metric 1.5s infinite;
+}
+
+@keyframes blink-metric {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.8; }
+}
+
+.alerta-texto {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #dc3545;
+    font-weight: bold;
+    font-size: 0.95em;
+    padding: 5px 0;
+}
+
+.alerta-icone {
+    font-size: 1.3em;
+    animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+.info-texto {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Histórico do fornecedor */
+.historico-fornecedor {
+    margin-top: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    line-height: 1.3;
+}
+
+.historico-fornecedor.fornecedor-ok {
+    background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+    border-left: 3px solid #4caf50;
+    color: #2e7d32;
+}
+
+.historico-fornecedor.fornecedor-alerta {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-left: 3px solid #f44336;
+    color: #d32f2f;
+    animation: pulse-red-light 2s infinite;
+}
+
+@keyframes pulse-red-light {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.01); box-shadow: 0 0 8px rgba(244, 67, 54, 0.3); }
+    100% { transform: scale(1); }
+}

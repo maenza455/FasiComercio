@@ -39,4 +39,7 @@ public interface OrcamentoRepository extends JpaRepository<Orcamento, Long> {
             @Param("idOrcamento") Long idOrcamento,
             @Param("status") String status
     );
+    
+    @Query("SELECT o FROM Orcamento o WHERE o.fornecedor.id = :idFornecedor AND o.status = 'Entregue' AND o.dataEntrega IS NOT NULL AND o.dataGeracao IS NOT NULL ORDER BY o.dataGeracao DESC")
+    List<Orcamento> findHistoricoFornecedor(@Param("idFornecedor") Integer idFornecedor);
 }
