@@ -117,7 +117,11 @@ public class OrdemDeCompraService {
         LocalDateTime agoraComHora = LocalDateTime.now();
         for (Orcamento orcamento : orcamentosAprovados) {
             orcamento.setStatus("aprovado");
-            orcamento.setDataGeracao(agora);
+            
+            // NOVA LÓGICA: Preencher DATA_EMISSAO com a data atual ao aprovar
+            // NÃO MAIS: setDataGeracao - parar de usar essa coluna
+            orcamento.setDataEmissao(agora);
+            
             orcamento.setUsuarioAprovador(usuarioPadrao);
             
             // FIXAR data/hora de aprovação no Map (momento exato da aprovação)

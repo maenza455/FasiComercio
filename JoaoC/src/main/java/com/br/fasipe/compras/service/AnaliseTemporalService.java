@@ -20,6 +20,10 @@ public class AnaliseTemporalService {
     
     /**
      * Analisa o histórico de desempenho de cada fornecedor em relação aos prazos de entrega
+     * NOVA LÓGICA (15/11/2025):
+     * - Usa DATA_EMISSAO (preenchida no momento da aprovação) ao invés de DATA_GERACAO
+     * - Calcula desvio padrão baseado na flutuação dos prazos de entrega
+     * - Considera apenas orçamentos com STATUS='aprovado', DATA_EMISSAO e DATA_ENTREGA preenchidos
      */
     public Map<Integer, AnaliseTemporalDTO> analisarHistoricoFornecedores(List<OrcamentoDTO> orcamentosAtuais) {
         Map<Integer, AnaliseTemporalDTO> analisesPorFornecedor = new HashMap<>();
@@ -48,29 +52,52 @@ public class AnaliseTemporalService {
     
     /**
      * Calcula a análise temporal baseada no histórico real de entregas do fornecedor
+     * NOVA LÓGICA: Baseado em DATA_EMISSAO (aprovação) → DATA_ENTREGA
+     * Calcula o desvio padrão das flutuações em relação ao prazo médio
      */
     private AnaliseTemporalDTO calcularAnaliseHistorica(List<OrcamentoDTO> historicoFornecedor) {
         if (historicoFornecedor == null || historicoFornecedor.isEmpty()) {
             return new AnaliseTemporalDTO(0.0, 0.0, 0.0, false, 0, "Sem dados históricos de entrega");
         }
         
-        // Calcular diferenças entre data prometida (dataEntrega) e data real de entrega
-        List<Long> diferencasDias = historicoFornecedor.stream()
-            .filter(o -> o.getDataEntrega() != null && o.getDataEmissao() != null)
+        System.out.println("\n📊 ============ ANÁLISE TEMPORAL ============");
+        System.out.println("📊 Total de orçamentos no histórico: " + historicoFornecedor.size());
+        
+        // DEBUG: Mostrar dados de cada orçamento
+        for (OrcamentoDTO o : historicoFornecedor) {
+            System.out.println("  📦 ID: " + o.getIdOrcamento() + 
+                             " | Fornecedor: " + o.getIdFornecedor() + 
+                             " | DATA_EMISSAO: " + o.getDataEmissao() + 
+                             " | DATA_ENTREGA: " + o.getDataEntrega());
+        }
+        
+        // Calcular dias entre DATA_EMISSAO (aprovação) e DATA_ENTREGA para cada orçamento
+        List<Long> diasEntrega = historicoFornecedor.stream()
+            .filter(o -> o.getDataEmissao() != null && o.getDataEntrega() != null)
             .map(o -> ChronoUnit.DAYS.between(o.getDataEmissao(), o.getDataEntrega()))
             .collect(Collectors.toList());
         
-        if (diferencasDias.isEmpty()) {
+        System.out.println("📊 Orçamentos válidos (com ambas as datas): " + diasEntrega.size());
+        System.out.println("📊 Dias de entrega calculados: " + diasEntrega);
+        
+        if (diasEntrega.isEmpty()) {
             return new AnaliseTemporalDTO(0.0, 0.0, 0.0, false, 0, "Dados insuficientes para cálculo de desvio");
         }
         
-        // Calcular estatísticas
-        double media = diferencasDias.stream()
+        // Calcular média dos dias de entrega
+        double media = diasEntrega.stream()
             .mapToDouble(Long::doubleValue)
             .average()
             .orElse(0.0);
         
-        double variancia = diferencasDias.stream()
+        // Calcular desvio padrão usando a fórmula correta
+        // Desvio Padrão = sqrt(Σ(xi - média)² / N)
+        // Exemplo: Se temos entregas de 5, 5, 7, 3 dias
+        //   média = (5+5+7+3)/4 = 5 dias
+        //   flutuações: 0, 0, 2, 2
+        //   variância = ((5-5)² + (5-5)² + (7-5)² + (3-5)²) / 4 = (0+0+4+4)/4 = 2
+        //   desvio padrão = sqrt(2) ≈ 1.41
+        double variancia = diasEntrega.stream()
             .mapToDouble(dias -> Math.pow(dias - media, 2))
             .average()
             .orElse(0.0);
@@ -78,13 +105,21 @@ public class AnaliseTemporalService {
         double desvioPadrao = Math.sqrt(variancia);
         double coeficienteVariacao = media != 0 ? (desvioPadrao / Math.abs(media)) * 100 : 0;
         
+        System.out.println("\n📊 ============ RESULTADO DO CÁLCULO ============");
+        System.out.println("📊 Média calculada: " + String.format("%.2f", media) + " dias");
+        System.out.println("📊 Variância: " + String.format("%.4f", variancia));
+        System.out.println("📊 Desvio Padrão calculado: " + String.format("%.2f", desvioPadrao) + " dias");
+        System.out.println("📊 Coeficiente de Variação: " + String.format("%.2f", coeficienteVariacao) + "%");
+        System.out.println("📊 Total de entregas: " + diasEntrega.size());
+        System.out.println("📊 ============================================\n");
+        
         // Alerta se desvio > 3 dias (mais rigoroso para fornecedores) OU coeficiente > 30%
         boolean isAlerta = desvioPadrao > 3.0 || coeficienteVariacao > 30.0;
         
         // Interpretar resultado para o usuário
-        String interpretacao = interpretarDesempenhoFornecedor(media, desvioPadrao, diferencasDias.size());
+        String interpretacao = interpretarDesempenhoFornecedor(media, desvioPadrao, diasEntrega.size());
         
-        return new AnaliseTemporalDTO(media, desvioPadrao, coeficienteVariacao, isAlerta, diferencasDias.size(), interpretacao);
+        return new AnaliseTemporalDTO(media, desvioPadrao, coeficienteVariacao, isAlerta, diasEntrega.size(), interpretacao);
     }
     
     /**

@@ -340,19 +340,20 @@ function criarHtmlProduto(grupo) {
                 historicoHtml = `
                     <div class="historico-fornecedor ${classeAlertaFornecedor}">
                         <small>
-                            📊 <strong>Média:</strong> ${historicoFornecedor.prazoMedio.toFixed(0)} dias<br>
-                            <strong>Desvio Padrão:</strong> ~${historicoFornecedor.desvioPadrao.toFixed(2)} dias
-                            <br><em>(${historicoFornecedor.totalEntregas} entregas analisadas)</em>
-                            ${isAlertaFornecedor ? '<br>⚠️ <strong>Alto risco de atraso!</strong>' : ''}
+                            📊 <strong>Histórico de Entregas</strong><br>
+                            <strong>Prazo Médio:</strong> ${historicoFornecedor.prazoMedio.toFixed(1).replace('.', ',')} dias<br>
+                            <strong>Desvio Padrão:</strong> ${historicoFornecedor.desvioPadrao.toFixed(2).replace('.', ',')} dias
+                            <br><em>(${historicoFornecedor.totalEntregas} entregas aprovadas)</em>
+                            ${isAlertaFornecedor ? '<br>⚠️ <strong>Alta variação nos prazos!</strong>' : '<br>✅ <strong>Prazos consistentes</strong>'}
                         </small>
                     </div>
                 `;
             } else {
-                // Mensagem quando não há dados
+                // Mensagem quando não há dados históricos
                 historicoHtml = `
                     <div class="historico-fornecedor fornecedor-ok">
                         <small>
-                            📊 <strong>Desvio Padrão:</strong> ${historicoFornecedor.interpretacao}
+                            📊 ${historicoFornecedor.interpretacao}
                         </small>
                     </div>
                 `;

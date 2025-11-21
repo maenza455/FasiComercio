@@ -17,12 +17,6 @@ public class Usuario {
     @Column(name = "IDUSUARIO")
     private Long idUsuario;
     
-    @Column(name = "ID_PROFISSIO")
-    private Long idProfissao;
-    
-    @Column(name = "ID_PESSOAFIS")
-    private Long idPessoaFisica;
-    
     @Column(name = "LOGUSUARIO", length = 50)
     private String loginUsuario;
     

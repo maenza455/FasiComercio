@@ -61,53 +61,56 @@ async function carregarOrcamentos() {
 }
 
 /**
- * Processa e agrupa os orçamentos por produto
+ * Processa os dados que já vêm agrupados por produto com análise temporal
  */
-function processarOrcamentos(orcamentos) {
-    if (!orcamentos || orcamentos.length === 0) {
+function processarOrcamentos(dadosAgrupados) {
+    if (!dadosAgrupados || dadosAgrupados.length === 0) {
         mostrarSemDados();
         return;
     }
 
-    // Agrupar por produto
+    // Resetar estruturas globais
     orcamentosPorProduto = {};
-    orcamentos.forEach(orcamento => {
-        const produtoId = orcamento.idProduto;
-        if (!orcamentosPorProduto[produtoId]) {
-            orcamentosPorProduto[produtoId] = {
-                produto: {
-                    id: orcamento.idProduto,
-                    nome: orcamento.nomeProduto,
-                    descricao: orcamento.descricaoProduto,
-                    unimedida: {
-                        sigla: orcamento.unidadeAbreviacao
-                    }
-                },
-                orcamentos: []
-            };
+    
+    // Processar cada grupo de produto
+    dadosAgrupados.forEach(grupo => {
+        const produto = grupo.produto;
+        const orcamentos = grupo.orcamentos;
+        const analiseTemporalData = grupo.analisetemporal;
+        
+        if (!produto || !produto.idProduto) {
+            console.error('Produto inválido no grupo:', grupo);
+            return;
         }
-        orcamentosPorProduto[produtoId].orcamentos.push(orcamento);
-    });
-
-    // Para cada produto, calcular o melhor orçamento e selecionar automaticamente
-    Object.entries(orcamentosPorProduto).forEach(([produtoId, grupo]) => {
-        const melhorOrcamento = calcularMelhorOrcamento(grupo.orcamentos);
-        if (melhorOrcamento) {
-            // CORREÇÃO: Se o melhor orçamento é fictício, selecionar o melhor orçamento real
-            let orcamentoParaSelecionar = melhorOrcamento;
-            
-            // Se o melhor é fictício (ID > 1000000), encontrar o melhor real
-            if (melhorOrcamento.idOrcamento >= 1000000) {
-                const orcamentosReais = grupo.orcamentos.filter(o => o.idOrcamento < 1000000);
-                if (orcamentosReais.length > 0) {
-                    orcamentoParaSelecionar = calcularMelhorOrcamento(orcamentosReais) || orcamentosReais[0];
+        
+        const produtoId = produto.idProduto;
+        
+        // Estruturar dados para compatibilidade com código existente
+        orcamentosPorProduto[produtoId] = {
+            produto: {
+                id: produto.idProduto,
+                nome: produto.nomeProduto,
+                descricao: produto.descricaoProduto,
+                unimedida: {
+                    sigla: produto.unidadeAbreviacao
                 }
-            }
-            
+            },
+            orcamentos: orcamentos,
+            analiseTemporalData: analiseTemporalData
+        };
+        
+        // Extrair apenas os dados de orçamento da nova estrutura
+        const orcamentosLimpos = orcamentos.map(item => {
+            return item.dadosOrcamento || item; // Extrair dadosOrcamento se existe, senão usar o item diretamente
+        }).filter(orcamento => orcamento && orcamento.idOrcamento); // Filtrar orçamentos válidos
+        
+        // Calcular e selecionar automaticamente o melhor orçamento
+        const melhorOrcamento = calcularMelhorOrcamento(orcamentosLimpos);
+        if (melhorOrcamento && melhorOrcamento.idOrcamento) {
             // ARMAZENAR o melhor orçamento para usar na renderização
-            grupo.melhorOrcamentoCalculado = orcamentoParaSelecionar;
+            orcamentosPorProduto[produtoId].melhorOrcamentoCalculado = melhorOrcamento;
             
-            selecoes[produtoId] = orcamentoParaSelecionar.idOrcamento.toString();
+            selecoes[produtoId] = melhorOrcamento.idOrcamento.toString();
         }
     });
 
@@ -136,6 +139,12 @@ function calcularMelhorOrcamento(orcamentos) {
     let menorPreco = Infinity;
 
     orcamentos.forEach(orcamento => {
+        // Verificação de segurança
+        if (!orcamento || !orcamento.precoCompra) {
+            console.warn('Orçamento com preço inválido:', orcamento);
+            return;
+        }
+        
         const precoAtual = parseFloat(orcamento.precoCompra.toString().replace(',', '.')) || 0;
         
         if (precoAtual < menorPreco) {
@@ -197,24 +206,7 @@ function extrairTempoGarantia(texto) {
     return 0;
 }
 
-/**
- * Função para selecionar automaticamente os melhores orçamentos
-    if (match) {
-        return parseInt(match[1]);
-    }
-    
-    // Se contém "à vista" ou similar, considera 0 dias
-    if (textoLower.includes('vista') || textoLower.includes('avista')) {
-        return 0;
-    }
-    
-    // Se contém palavras como "parcelado", "prazo", assume algum prazo
-    if (textoLower.includes('parcelado') || textoLower.includes('prazo')) {
-        return 30; // valor padrão
-    }
-    
-    return 0;
-}
+
 
 /**
  * Extrai o tempo de garantia em meses de um texto
@@ -277,12 +269,20 @@ function renderizarOrcamentos() {
 function criarHtmlProduto(grupo) {
     const produto = grupo.produto;
     const orcamentos = grupo.orcamentos;
+    const analiseTemporalData = grupo.analiseTemporalData;
 
     // Verificação de segurança para evitar o erro "Cannot read properties of undefined"
     if (!produto || produto.id === undefined) {
         console.error('Produto inválido:', produto);
         return '<div class="error">Erro: Produto inválido</div>';
     }
+    
+    // USAR o melhor orçamento já calculado (NUNCA recalcular!)
+    const grupoAtual = orcamentosPorProduto[produto.id];
+    const melhorOrcamentoAtual = grupoAtual?.melhorOrcamentoCalculado || null;
+    const melhorOrcamentoIdAtual = melhorOrcamentoAtual ? melhorOrcamentoAtual.idOrcamento : null;
+    
+    // Análise temporal removida - usando apenas análise individual por fornecedor
 
     let html = `
         <div class="produto-header">
@@ -310,14 +310,55 @@ function criarHtmlProduto(grupo) {
     `;
 
     // USAR o melhor orçamento já calculado (NUNCA recalcular!)
-    const grupoProduto = orcamentosPorProduto[produto.id];
-    const melhorOrcamento = grupoProduto?.melhorOrcamentoCalculado || null;
-    const melhorOrcamentoId = melhorOrcamento ? melhorOrcamento.idOrcamento : null;
+    const grupoProdutoRender = orcamentosPorProduto[produto.id];
+    const melhorOrcamentoRender = grupoProdutoRender?.melhorOrcamentoCalculado || null;
+    const melhorOrcamentoIdRender = melhorOrcamentoRender ? melhorOrcamentoRender.idOrcamento : null;
     
-    orcamentos.forEach((orcamento, index) => {
+    orcamentos.forEach((orcamentoInfo, index) => {
+        // Extrair dados do orçamento e análise histórica do fornecedor
+        const orcamento = orcamentoInfo.dadosOrcamento || orcamentoInfo; // Compatibilidade com estrutura antiga
+        const historicoFornecedor = orcamentoInfo.historicoFornecedor || null;
+        
+        // Verificação de segurança para evitar erros
+        if (!orcamento || !orcamento.idOrcamento) {
+            console.error('Orçamento inválido:', orcamentoInfo);
+            return; // Pular este orçamento inválido
+        }
+        
         const isChecked = selecoes[produto.id] === orcamento.idOrcamento.toString();
-        const isRecomendado = orcamento.idOrcamento === melhorOrcamentoId;
+        const isRecomendado = orcamento.idOrcamento === melhorOrcamentoIdRender;
         const rowClass = isChecked ? 'selected' : '';
+        
+        // Criar HTML para análise histórica do fornecedor
+        let historicoHtml = '';
+        if (historicoFornecedor) {
+            const isAlertaFornecedor = historicoFornecedor.isAlerta === true || historicoFornecedor.isAlerta === 'true';
+            const classeAlertaFornecedor = isAlertaFornecedor ? 'fornecedor-alerta' : 'fornecedor-ok';
+            
+            // Formatação especial se tiver dados
+            if (historicoFornecedor.totalEntregas > 0) {
+                historicoHtml = `
+                    <div class="historico-fornecedor ${classeAlertaFornecedor}">
+                        <small>
+                            📊 <strong>Histórico de Entregas</strong><br>
+                            <strong>Prazo Médio:</strong> ${historicoFornecedor.prazoMedio.toFixed(1).replace('.', ',')} dias<br>
+                            <strong>Desvio Padrão:</strong> ${historicoFornecedor.desvioPadrao.toFixed(2).replace('.', ',')} dias
+                            <br><em>(${historicoFornecedor.totalEntregas} entregas aprovadas)</em>
+                            ${isAlertaFornecedor ? '<br>⚠️ <strong>Alta variação nos prazos!</strong>' : '<br>✅ <strong>Prazos consistentes</strong>'}
+                        </small>
+                    </div>
+                `;
+            } else {
+                // Mensagem quando não há dados históricos
+                historicoHtml = `
+                    <div class="historico-fornecedor fornecedor-ok">
+                        <small>
+                            📊 ${historicoFornecedor.interpretacao}
+                        </small>
+                    </div>
+                `;
+            }
+        }
         
         html += `
             <tr class="${rowClass}" data-orcamento-id="${orcamento.idOrcamento}">
@@ -334,6 +375,7 @@ function criarHtmlProduto(grupo) {
                     <strong>${orcamento.nomeFornecedor}</strong>
                     ${isRecomendado ? '<span class="recomendado-badge">🌟 Recomendado</span>' : ''}<br>
                     <small>${orcamento.representante || ''}</small>
+                    ${historicoHtml}
                 </td>
                 <td class="currency">
                     R$ ${formatarMoeda(orcamento.precoCompra)}
