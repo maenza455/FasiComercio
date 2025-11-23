@@ -1,0 +1,70 @@
+/* ========================================
+   FASICOMÉRCIO - ESTILOS GLOBAIS
+   ======================================== */
+
+/* Importar fonte Montserrat do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+/* ========================================
+   VARIÁVEIS CSS - PALETA DE CORES
+   ======================================== */
+:root {
+    /* Cores principais */
+    --azul-primary: #335e9e;
+    --branco: #FFFFFF;
+    --cinza: #d9d9d9;
+    
+    /* Fontes */
+    --font-montserrat: 'Montserrat', sans-serif;
+}
+
+/* ========================================
+   RESET E CONFIGURAÇÃO BASE
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-montserrat);
+    font-weight: 400; /* Montserrat Regular */
+    background-color: var(--cinza);
+    color: #333;
+}
+
+/* ========================================
+   TIPOGRAFIA
+   ======================================== */
+
+/* Títulos - Montserrat Bold */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-montserrat);
+    font-weight: 700; /* Montserrat Bold */
+    color: var(--azul-primary);
+}
+
+/* Subtítulos e Corpo - Montserrat Regular */
+p, span, div, a, button, input, textarea, select, label {
+    font-family: var(--font-montserrat);
+    font-weight: 400; /* Montserrat Regular */
+}
+
+/* ========================================
+   CLASSES UTILITÁRIAS
+   ======================================== */
+
+/* Cores de texto */
+.text-azul { color: var(--azul-primary); }
+.text-branco { color: var(--branco); }
+.text-cinza { color: var(--cinza); }
+
+/* Cores de fundo */
+.bg-azul { background-color: var(--azul-primary); }
+.bg-branco { background-color: var(--branco); }
+.bg-cinza { background-color: var(--cinza); }
+
+/* Fontes */
+.font-bold { font-weight: 700; } /* Montserrat Bold */
+.font-regular { font-weight: 400; } /* Montserrat Regular */
