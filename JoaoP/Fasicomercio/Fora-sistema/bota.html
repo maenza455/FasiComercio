@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  .btn {
+    background: #1e88e5;
+    color: #fff;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      background 0.25s ease;
+    box-shadow: 0 6px 16px rgba(30, 136, 229, 0.25);
+  }
+
+  /* efeito ao passar o mouse */
+  .btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(30, 136, 229, 0.32);
+    background: #2196f3;
+  }
+
+  /* efeito ao clicar */
+  .btn:active {
+    transform: translateY(0px) scale(0.97);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .18);
+    background: #1976d2;
+  }
+
+  /* animação de movimento suave */
+  .btn.float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<button class="btn float">Botão Azul</button>
+
+</body>
+</html>

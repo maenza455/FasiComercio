@@ -1,0 +1,169 @@
+/* ===== Reset ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', Arial, sans-serif;
+}
+
+body {
+    background: #335e9e;
+    /* Azul site */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Botão Sair */
+.sair {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #fff;
+    color: #335e9e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    user-select: none;
+}
+
+.sair:hover {
+    background: #d9d9d9;
+}
+
+/* Container principal */
+.login-container {
+    background: #fff;
+    width: 360px;
+    border-radius: 20px;
+    padding: 40px 30px 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    position: relative;
+}
+
+/* Logo do título */
+.login-container h1 {
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #0c2248;
+    /* Tom de azul mais escuro para títulos */
+}
+
+.login-container h1 span {
+    color: #36b3c9;
+    /* Cor similar ao "comércio" do site */
+}
+
+/* Botão Fazer Login do topo (apenas visual, no exemplo é "Fazer Cadastro" no final) */
+.btn-title {
+    background-color: #335e9e;
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    padding: 14px 0;
+    border: none;
+    border-radius: 12px;
+    width: 100%;
+    margin-bottom: 30px;
+    cursor: default;
+    user-select: none;
+    box-shadow: 0 4px 8px rgba(51, 94, 158, 0.4);
+}
+
+/* Input box com ícone */
+.input-box {
+    position: relative;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 14px 45px 14px 45px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #0c2248;
+    border: 2px solid #335e9e;
+    border-radius: 8px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-box input::placeholder {
+    color: #335e9e;
+    font-weight: 600;
+}
+
+.input-box input:focus {
+    outline: none;
+    border-color: #36b3c9;
+    box-shadow: 0 0 8px #36b3c9;
+    background-color: #f0f8fd;
+}
+
+.input-box i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 15px;
+    font-size: 20px;
+    color: #335e9e;
+    pointer-events: none;
+}
+
+/* Botão Login */
+.btn-login {
+    background: #335e9e;
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    padding: 14px 0;
+    width: 100%;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.35s, box-shadow 0.35s;
+    box-shadow: 0 4px 12px rgba(51, 94, 158, 0.5);
+    margin-top: 10px;
+    user-select: none;
+}
+
+.btn-login:hover:not(:disabled) {
+    background-color: #294a7f;
+    box-shadow: 0 6px 14px rgba(41, 74, 127, 0.7);
+}
+
+.btn-login:disabled {
+    background-color: #a3aed9;
+    cursor: not-allowed;
+    box-shadow: none;
+    color: #e2e6f2;
+}
+
+/* Mensagens de erro */
+.error-msg {
+    color: #d93025;
+    /* vermelho de erro */
+    font-size: 13px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    text-align: left;
+    display: none;
+}
+
+/* Feedback sucesso */
+.success-msg {
+    color: #188038;
+    /* verde */
+    font-weight: 700;
+    margin-top: 15px;
+    font-size: 15px;
+}

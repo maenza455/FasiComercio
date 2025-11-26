@@ -1,0 +1,12 @@
+Dados definidos para o design do sistema do Borba
+
+FONTE
+- Montserrat Bold: Títulos
+- Montserrat Regular: Subtítulos e corpo do texto
+
+CORES
+- Azul: #335e9e
+- Branco: #FFFFFF
+- Cinza: #d9d9d9
+
+Tipo de Layote: Básico

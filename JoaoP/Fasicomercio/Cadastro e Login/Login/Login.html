@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login | Fasicomércio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="Login.css">
+</head>
+
+<body>
+    <div class="login-container" role="main" aria-labelledby="loginTitle">
+        <h1 id="loginTitle">Fasi<span>comércio</span></h1>
+
+        <div class="input-box">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <input type="text" id="usuario" name="usuario" placeholder="Usuário" aria-label="Usuário"
+                autocomplete="username" required />
+            <div class="error-msg" id="error-usuario">Por favor, informe o usuário.</div>
+        </div>
+
+        <div class="input-box">
+            <i class="fas fa-lock" aria-hidden="true"></i>
+            <input type="password" id="senha" name="senha" placeholder="Senha" aria-label="Senha"
+                autocomplete="current-password" required />
+            <div class="error-msg" id="error-senha">Por favor, informe a senha.</div>
+        </div>
+
+        <button class="btn-login" id="btnLogin" onclick="fazerLogin()" >
+            Login
+        </button>
+
+        <div class="success-msg" id="success-msg" role="alert" aria-live="polite" style="display:none;">
+            ✅ Login realizado com sucesso!
+        </div>
+
+        <div class="error-msg" id="login-error-msg" role="alert" aria-live="assertive" style="display:none;">
+            ❌ Usuário ou senha incorretos.
+        </div>
+    </div>
+
+    <script src="Login.js"></script>
+</body>
+
+</html>

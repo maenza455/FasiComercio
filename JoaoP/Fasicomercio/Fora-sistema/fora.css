@@ -1,0 +1,101 @@
+:root {
+    --color-azul: #335e9e;
+    --color-branco: #FFFFFF;
+    --color-cinza: #d9d9d9;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--color-azul);
+    color: var(--color-azul);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: radial-gradient(circle at center,
+    rgb(255, 255, 255) 1px, transparent 1px),
+    radial-gradient(circle at center,
+    rgba(255 255 255 / 0.06) 1px, transparent 1px);
+    background-size: 20px 20px, 40px 40px;
+    background-position: 0 0, 20px 20px;
+}
+
+.container {
+    background: var(--color-branco);
+    border-radius: 2rem;
+    max-width: 400px;
+    width: 90vw;
+    padding: 2rem 2rem 3rem 2rem;
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15);
+    text-align: center;
+    position: relative;
+}
+
+.title {
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: var(--color-azul);
+    margin: 1.5rem 0 2rem 0;
+    user-select: none;
+}
+
+.title .highlight-comercio {
+    font-weight: 400;
+    color: #3dbdb7;
+}
+
+.btn-cadastrar {
+    background: #0e273d;
+    color: #fff;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+    box-shadow: 0 6px 16px rgba(30, 136, 229, 0.25);
+}
+
+/* efeito ao passar o mouse */
+.btn-cadastrar:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(16, 142, 252, 0.384);
+    background: #0e3f68;
+}
+
+/* efeito ao clicar */
+.btn-cadastrar:active {
+    transform: translateY(0px) scale(0.97);
+    box-shadow: 0 4px 12px rgba(80, 33, 33, 0.356);
+    background: #2e4e68;
+}
+
+/* animação de movimento suave */
+.btn-cadastrar.float {
+    animation: float 4s ease-in-out infinite;
+}
+
+
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}

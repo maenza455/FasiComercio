@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fasicomércio - Cadastro</title>
+    <link rel="stylesheet" href="Cadastro.css" />
+</head>
+
+<body>
+    <button type="button" class="btn-sair" aria-label="Sair do sistema" onclick="sair()">Sair</button>
+    <div class="container" role="main" aria-label="Formulário de cadastro do sistema Borba Fasicomércio">
+        <h1 class="title">Fasi<span class="highlight-comercio">comércio</span></h1>
+
+
+        <form id="cadastroForm" novalidate>
+
+            <div class="input-group">
+                <svg class="icon" fill="none" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                <input type="text" id="usuario" name="usuario" placeholder="Usuário" aria-label="Campo de usuário"
+                    required autocomplete="username" />
+            </div>
+
+            <div class="input-group">
+                <svg class="icon" fill="none" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    <circle cx="12" cy="16" r="1" />
+                </svg>
+                <input type="password" id="senha" name="senha" placeholder="Senha" aria-label="Campo de senha" required
+                    autocomplete="new-password" />
+            </div>
+
+            <div class="input-group">
+                <svg class="icon" fill="none" viewBox="0 0 24 24">
+                    <path d="M22 12v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7" />
+                    <polyline points="22 7 12 13 2 7" />
+                </svg>
+                <input type="email" id="email" name="email" placeholder="E-mail" aria-label="Campo de e-mail" required
+                    autocomplete="email" />
+            </div>
+
+            <div class="input-group" style="border-color: var(--color-azul);">
+                <input type="text" id="nome" name="nome" placeholder="Nome" aria-label="Campo de nome completo" required
+                    autocomplete="name" style="padding-left: 1rem;" />
+            </div>
+
+            <button id="btnCadastrar" type="submit" class="btn-cadastrar" aria-label="Botão para cadastrar" onclick="fazerLogin()"> Cadastrar</button>
+        </form>
+
+        <a href="#" class="link-login" role="link" tabindex="0" onclick="fazerLogin()" disabled>Fazer login</a>
+    </div>
+
+    <script src="cadastro.js"> </script>
+</body>
+
+</html>

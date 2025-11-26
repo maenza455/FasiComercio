@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fasicomércio - Sistema</title>
+  <link rel="stylesheet" href="Main.css">
+</head>
+
+<body>
+  <header>
+    <div class="logo"><span class="fasi">Fasi</span><span class="comercio">comércio</span></div>
+    <div class="user-icon"><i class="fas fa-user"></i></div>
+  </header>
+
+  <div class="container">
+    <nav class="sidebar">
+      <button class="btn-menu active" type="button" data-target="inicio-section">
+        <i class="fas fa-home"></i> Início
+      </button>
+      <button class="btn-menu" type="button" data-target="produtos-section">
+        <i class="fas fa-table"></i> Produtos
+      </button>
+      <button class="btn-exit" type="button">
+        <i class="fas fa-sign-out-alt" onclick="botaoSair()"></i> Sair
+      </button>
+    </nav>
+
+    <main class="content">
+      <section id="inicio-section" class="content-section active">
+        <h2 class="title">Início</h2>
+        <p>Bem-vindo à página inicial!</p>
+      </section>
+
+      <section id="produtos-section" class="content-section">
+        <h2 class="title">Tabela de Produtos</h2>
+
+        <div class="table-container">
+          <table id="productsTable">
+            <thead>
+              <tr>
+                <td>Id</td>
+                <td>Nome</td>
+                <td>Descrição</td>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <button id="prevPage" disabled>Anterior</button>
+          <span id="pageInfo">Página 1</span>
+          <button id="nextPage">Próxima</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="Main.js"></script>
+</body>
+
+</html>
