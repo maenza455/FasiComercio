@@ -106,24 +106,24 @@ body {
 .page-header {
     background-color: #FFFFFF;
     color: #335e9e;
-    padding: 30px;
+    padding: 15px 20px;
     border-radius: 15px;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
     text-align: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .page-header h1 {
-    font-size: 2.5em;
+    font-size: 1.5em;
     font-weight: 700;
     color: #335e9e;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
 .page-header p {
     font-weight: 400;
     color: #333;
-    font-size: 1.1em;
+    font-size: 0.85em;
 }
 
 /* Mensagens */
@@ -160,10 +160,10 @@ body {
     display: flex;
     justify-content: space-around;
     background-color: #ffffff;
-    padding: 20px;
+    padding: 15px 20px;
     border-radius: 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 25px;
+    margin-bottom: 15px;
 }
 
 .stat-item {
@@ -171,21 +171,22 @@ body {
 }
 
 .stat-number {
-    font-size: 2.5em;
+    font-size: 1.8em;
     font-weight: 700;
     color: #335e9e;
 }
 
 .stat-label {
     color: #333;
-    margin-top: 8px;
+    margin-top: 5px;
     font-weight: 400;
+    font-size: 0.9em;
 }
 
 /* Grupos de produtos */
 .produto-group {
     background-color: #FFFFFF;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     border-radius: 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -194,160 +195,163 @@ body {
 .produto-header {
     background-color: #335e9e;
     color: white;
-    padding: 20px;
+    padding: 12px 15px;
+}
+
+.produto-title {
     font-weight: 700;
-    font-size: 1.2em;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+}
+
+.produto-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.85em;
+    font-weight: 400;
+    opacity: 0.95;
+}
+
+.produto-meta-item strong {
+    font-weight: 600;
 }
 
 .produto-info {
-    padding: 20px;
+    padding: 12px 15px;
     background-color: #d9d9d9;
     border-bottom: 1px solid #d9d9d9;
     font-weight: 400;
+    font-size: 0.9em;
 }
 
 /* Container de Orçamentos em Cards */
 .orcamentos-container {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    padding: 20px;
+    gap: 8px;
+    padding: 15px;
 }
 
-/* Card de Orçamento */
-.orcamento-card {
-    background-color: #d9d9d9;
-    border-radius: 8px;
-    border: 2px solid transparent;
+/* Card Compacto - Tudo em uma linha */
+.orcamento-card-compact {
+    background-color: #ffffff;
+    border-radius: 6px;
+    border: 2px solid #d9d9d9;
     transition: all 0.2s ease;
     cursor: pointer;
 }
 
-.orcamento-card:hover {
+.orcamento-card-compact:hover {
     border-color: #335e9e;
-    box-shadow: 0 2px 8px rgba(51, 94, 158, 0.2);
+    box-shadow: 0 2px 4px rgba(51, 94, 158, 0.2);
 }
 
-.orcamento-card.selected {
-    background-color: #d9d9d9;
+.orcamento-card-compact.selected {
+    background-color: #e3f2fd;
     border-color: #335e9e;
-    border-left-width: 6px;
+    border-left-width: 4px;
 }
 
-/* Header do Card */
-.orcamento-card-header {
+/* Linha única com todas as informações */
+.card-line {
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 15px 20px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #d9d9d9;
-    border-radius: 8px 8px 0 0;
+    padding: 12px 20px;
 }
 
-.card-select input[type="radio"] {
+/* Container para badges (Recomendado + Histórico) - Largura fixa */
+.badges-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    min-width: 280px;
+    width: 280px;
+    flex-shrink: 0;
+}
+
+/* Container para campos de informação - Grid fixo */
+.info-fields {
+    display: grid;
+    grid-template-columns: 140px 95px 140px 135px 115px 135px;
+    gap: 10px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.card-radio {
     width: 20px;
     height: 20px;
     accent-color: #335e9e;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
-.card-fornecedor {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.fornecedor-nome {
-    font-size: 1.1em;
+.fornecedor-nome-compact {
+    font-size: 1em;
     font-weight: 700;
     color: #333;
+    min-width: 200px;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.recomendado-badge {
+/* Badge Recomendado Compacto */
+.badge-recomendado {
     background-color: #f39c12;
     color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.75em;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 0.7em;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
-/* Histórico do Fornecedor */
-.historico-fornecedor {
-    padding: 12px 20px;
-    border-left: 4px solid;
-    margin: 0;
+/* Badge Histórico Inline */
+.badge-historico {
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 0.78em;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
-.historico-fornecedor.fornecedor-ok {
+.badge-historico.badge-ok {
     background-color: #27ae60;
-    border-left-color: #27ae60;
-    color: #ffffff;
+    color: white;
 }
 
-.historico-fornecedor.fornecedor-alerta {
+.badge-historico.badge-alerta {
     background-color: #e74c3c;
-    border-left-color: #e74c3c;
-    color: #ffffff;
+    color: white;
 }
 
-.historico-fornecedor strong {
-    color: #ffffff;
-    font-weight: 700;
-}
-
-.historico-fornecedor small {
-    font-size: 0.9em;
-    color: #ffffff;
-}
-
-/* Body do Card */
-.orcamento-card-body {
-    padding: 20px;
-}
-
-.card-info-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-bottom: 15px;
-}
-
-.card-info-row:last-child {
-    margin-bottom: 0;
-}
-
-.info-item {
-    background-color: #ffffff;
-    padding: 12px 15px;
-    border-radius: 6px;
-    border: 1px solid #d9d9d9;
-}
-
-.info-label {
-    font-size: 0.85em;
-    color: #335e9e;
-    font-weight: 700;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.info-value {
-    font-size: 1em;
+.badge-historico.badge-neutro {
+    background-color: #d9d9d9;
     color: #333;
-    font-weight: 500;
 }
 
-.info-value.value-money {
-    text-align: right;
-    font-weight: 700;
-    color: #27ae60;
-    font-size: 1.1em;
+/* Info Badges Compactos */
+.info-badge {
+    background-color: #f4f4f4;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.78em;
+    color: #333;
+    border: 1px solid #d9d9d9;
+    white-space: nowrap;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.info-badge strong {
+    color: #335e9e;
+    font-weight: 600;
 }
 
 .info-value.value-money {
@@ -378,19 +382,19 @@ body {
 /* Ações */
 .actions {
     background-color: #FFFFFF;
-    padding: 30px;
+    padding: 20px;
     border-radius: 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .btn-primary {
     background-color: #335e9e;
     color: white;
     border: none;
-    padding: 15px 40px;
-    font-size: 1.1em;
+    padding: 12px 30px;
+    font-size: 1em;
     font-weight: 700;
     border-radius: 6px;
     cursor: pointer;

@@ -286,11 +286,11 @@ function criarHtmlProduto(grupo) {
 
     let html = `
         <div class="produto-header">
-            ${produto.nome} (${produto.unimedida.sigla})
-        </div>
-        <div class="produto-info">
-            <strong>Descrição:</strong> ${produto.descricao || 'Não informada'}<br>
-            <strong>Quantidade de Cotações:</strong> ${orcamentos.length}
+            <div class="produto-title">${produto.nome} (${produto.unimedida.sigla})</div>
+            <div class="produto-meta">
+                <span class="produto-meta-item"><strong>Descrição:</strong> ${produto.descricao || 'Não informada'}</span>
+                <span class="produto-meta-item"><strong>Quantidade de Cotações:</strong> ${orcamentos.length}</span>
+            </div>
         </div>
         <div class="orcamentos-container">
     `;
@@ -315,83 +315,43 @@ function criarHtmlProduto(grupo) {
         const isRecomendado = orcamento.idOrcamento === melhorOrcamentoIdRender;
         const rowClass = isChecked ? 'selected' : '';
         
-        // Criar HTML para análise histórica do fornecedor
+        // Criar badge inline para histórico do fornecedor
         let historicoHtml = '';
         if (historicoFornecedor) {
             const isAlertaFornecedor = historicoFornecedor.isAlerta === true || historicoFornecedor.isAlerta === 'true';
-            const classeAlertaFornecedor = isAlertaFornecedor ? 'fornecedor-alerta' : 'fornecedor-ok';
             
-            // Formatação especial se tiver dados
             if (historicoFornecedor.totalEntregas > 0) {
-                historicoHtml = `
-                    <div class="historico-fornecedor ${classeAlertaFornecedor}">
-                        <small>
-                            <strong>Histórico de Entregas</strong><br>
-                            <strong>Prazo Médio:</strong> ${historicoFornecedor.prazoMedio.toFixed(1).replace('.', ',')} dias<br>
-                            <strong>Desvio Padrão:</strong> ${historicoFornecedor.desvioPadrao.toFixed(2).replace('.', ',')} dias
-                            <br><em>(${historicoFornecedor.totalEntregas} entregas aprovadas)</em>
-                            ${isAlertaFornecedor ? '<br><strong>Alta variação nos prazos</strong>' : '<br><strong>Prazos consistentes</strong>'}
-                        </small>
-                    </div>
-                `;
+                const classeCor = isAlertaFornecedor ? 'badge-alerta' : 'badge-ok';
+                const dp = historicoFornecedor.desvioPadrao.toFixed(2).replace('.', ',');
+                historicoHtml = `<span class="badge-historico ${classeCor}">Desvio Padrão: ${dp} dias</span>`;
             } else {
-                // Mensagem quando não há dados históricos
-                historicoHtml = `
-                    <div class="historico-fornecedor fornecedor-ok">
-                        <small>
-                            ${historicoFornecedor.interpretacao}
-                        </small>
-                    </div>
-                `;
+                historicoHtml = `<span class="badge-historico badge-neutro">Sem histórico</span>`;
             }
         }
         
         html += `
-            <div class="orcamento-card ${rowClass}" data-orcamento-id="${orcamento.idOrcamento}">
-                <div class="orcamento-card-header">
-                    <div class="card-select">
-                        <input type="radio" 
-                               name="produto_${produto.id}" 
-                               value="${orcamento.idOrcamento}"
-                               ${isChecked ? 'checked' : ''}>
-                    </div>
-                    <div class="card-fornecedor">
-                        <div class="fornecedor-nome">${orcamento.nomeFornecedor}</div>
-                        ${isRecomendado ? '<span class="recomendado-badge">RECOMENDADO</span>' : ''}
-                    </div>
-                </div>
-                
-                ${historicoHtml}
-                
-                <div class="orcamento-card-body">
-                    <div class="card-info-row">
-                        <div class="info-item">
-                            <div class="info-label">Valor Unitário</div>
-                            <div class="info-value value-money">R$ ${formatarMoeda(orcamento.precoCompra)}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Quantidade</div>
-                            <div class="info-value">${orcamento.quantidade}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Valor Total</div>
-                            <div class="info-value value-money">R$ ${formatarMoeda(orcamento.valorTotal)}</div>
-                        </div>
+            <div class="orcamento-card-compact ${rowClass}" data-orcamento-id="${orcamento.idOrcamento}">
+                <div class="card-line">
+                    <input type="radio" 
+                           class="card-radio"
+                           name="produto_${produto.id}" 
+                           value="${orcamento.idOrcamento}"
+                           ${isChecked ? 'checked' : ''}>
+                    
+                    <span class="fornecedor-nome-compact">${orcamento.nomeFornecedor}</span>
+                    
+                    <div class="badges-container">
+                        ${isRecomendado ? '<span class="badge-recomendado">RECOMENDADO</span>' : ''}
+                        ${historicoHtml}
                     </div>
                     
-                    <div class="card-info-row">
-                        <div class="info-item">
-                            <div class="info-label">Data da Entrega</div>
-                            <div class="info-value">${formatarData(orcamento.dataEntrega)}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Condições de Pagamento</div>
-                            <div class="info-value">${orcamento.condicoesPagamento || '-'}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Garantia</div>
-                            <div class="info-value">${orcamento.garantia || '-'}</div>
-                        </div>
+                    <div class="info-fields">
+                        <span class="info-badge"><strong>Valor Unit:</strong> R$ ${formatarMoeda(orcamento.precoCompra)}</span>
+                        <span class="info-badge"><strong>Qtd:</strong> ${orcamento.quantidade}</span>
+                        <span class="info-badge"><strong>Total:</strong> R$ ${formatarMoeda(orcamento.valorTotal)}</span>
+                        <span class="info-badge"><strong>Entrega:</strong> ${formatarData(orcamento.dataEntrega)}</span>
+                        <span class="info-badge"><strong>Pagto:</strong> ${orcamento.condicoesPagamento || '-'}</span>
+                        <span class="info-badge"><strong>Garantia:</strong> ${orcamento.garantia || '-'}</span>
                     </div>
                 </div>
             </div>
@@ -411,7 +371,7 @@ function criarHtmlProduto(grupo) {
 function atualizarVisualizacaoSelecao(produtoId, orcamentoId) {
     // Remove seleção anterior
     document.querySelectorAll(`input[name="produto_${produtoId}"]`).forEach(radio => {
-        const card = radio.closest('.orcamento-card');
+        const card = radio.closest('.orcamento-card-compact');
         if (card) {
             card.classList.remove('selected');
         }
@@ -420,7 +380,7 @@ function atualizarVisualizacaoSelecao(produtoId, orcamentoId) {
     // Adiciona seleção atual
     const radioSelecionado = document.querySelector(`input[name="produto_${produtoId}"][value="${orcamentoId}"]`);
     if (radioSelecionado) {
-        const card = radioSelecionado.closest('.orcamento-card');
+        const card = radioSelecionado.closest('.orcamento-card-compact');
         if (card) {
             card.classList.add('selected');
         }
