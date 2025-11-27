@@ -286,27 +286,13 @@ function criarHtmlProduto(grupo) {
 
     let html = `
         <div class="produto-header">
-            🛍️ ${produto.nome} (${produto.unimedida.sigla})
+            ${produto.nome} (${produto.unimedida.sigla})
         </div>
         <div class="produto-info">
             <strong>Descrição:</strong> ${produto.descricao || 'Não informada'}<br>
             <strong>Quantidade de Cotações:</strong> ${orcamentos.length}
         </div>
-        <table class="cotacoes-table">
-            <thead>
-                <tr>
-                    <th class="radio-column">Selecionar</th>
-                    <th>ID do Produto</th>
-                    <th>Fornecedor</th>
-                    <th>Valor Unitário</th>
-                    <th>Quantidade</th>
-                    <th>Valor Total</th>
-                    <th class="date-column">Data da Entrega</th>
-                    <th>Condições de Pagamento</th>
-                    <th>Garantia</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="orcamentos-container">
     `;
 
     // USAR o melhor orçamento já calculado (NUNCA recalcular!)
@@ -340,11 +326,11 @@ function criarHtmlProduto(grupo) {
                 historicoHtml = `
                     <div class="historico-fornecedor ${classeAlertaFornecedor}">
                         <small>
-                            📊 <strong>Histórico de Entregas</strong><br>
+                            <strong>Histórico de Entregas</strong><br>
                             <strong>Prazo Médio:</strong> ${historicoFornecedor.prazoMedio.toFixed(1).replace('.', ',')} dias<br>
                             <strong>Desvio Padrão:</strong> ${historicoFornecedor.desvioPadrao.toFixed(2).replace('.', ',')} dias
                             <br><em>(${historicoFornecedor.totalEntregas} entregas aprovadas)</em>
-                            ${isAlertaFornecedor ? '<br>⚠️ <strong>Alta variação nos prazos!</strong>' : '<br>✅ <strong>Prazos consistentes</strong>'}
+                            ${isAlertaFornecedor ? '<br><strong>Alta variação nos prazos</strong>' : '<br><strong>Prazos consistentes</strong>'}
                         </small>
                     </div>
                 `;
@@ -353,7 +339,7 @@ function criarHtmlProduto(grupo) {
                 historicoHtml = `
                     <div class="historico-fornecedor fornecedor-ok">
                         <small>
-                            📊 ${historicoFornecedor.interpretacao}
+                            ${historicoFornecedor.interpretacao}
                         </small>
                     </div>
                 `;
@@ -361,47 +347,59 @@ function criarHtmlProduto(grupo) {
         }
         
         html += `
-            <tr class="${rowClass}" data-orcamento-id="${orcamento.idOrcamento}">
-                <td class="radio-column">
-                    <input type="radio" 
-                           name="produto_${produto.id}" 
-                           value="${orcamento.idOrcamento}"
-                           ${isChecked ? 'checked' : ''}>
-                </td>
-                <td>
-                    ${orcamento.idProduto}
-                </td>
-                <td>
-                    <strong>${orcamento.nomeFornecedor}</strong>
-                    ${isRecomendado ? '<span class="recomendado-badge">🌟 Recomendado</span>' : ''}<br>
-                    <small>${orcamento.representante || ''}</small>
-                    ${historicoHtml}
-                </td>
-                <td class="currency">
-                    R$ ${formatarMoeda(orcamento.precoCompra)}
-                </td>
-                <td>
-                    ${orcamento.quantidade}
-                </td>
-                <td class="currency">
-                    R$ ${formatarMoeda(orcamento.valorTotal)}
-                </td>
-                <td class="date-column">
-                    ${formatarData(orcamento.dataEntrega)}
-                </td>
-                <td>
-                    ${orcamento.condicoesPagamento || '-'}
-                </td>
-                <td>
-                    ${orcamento.garantia || '-'}
-                </td>
-            </tr>
+            <div class="orcamento-card ${rowClass}" data-orcamento-id="${orcamento.idOrcamento}">
+                <div class="orcamento-card-header">
+                    <div class="card-select">
+                        <input type="radio" 
+                               name="produto_${produto.id}" 
+                               value="${orcamento.idOrcamento}"
+                               ${isChecked ? 'checked' : ''}>
+                    </div>
+                    <div class="card-fornecedor">
+                        <div class="fornecedor-nome">${orcamento.nomeFornecedor}</div>
+                        ${isRecomendado ? '<span class="recomendado-badge">RECOMENDADO</span>' : ''}
+                    </div>
+                </div>
+                
+                ${historicoHtml}
+                
+                <div class="orcamento-card-body">
+                    <div class="card-info-row">
+                        <div class="info-item">
+                            <div class="info-label">Valor Unitário</div>
+                            <div class="info-value value-money">R$ ${formatarMoeda(orcamento.precoCompra)}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Quantidade</div>
+                            <div class="info-value">${orcamento.quantidade}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Valor Total</div>
+                            <div class="info-value value-money">R$ ${formatarMoeda(orcamento.valorTotal)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-info-row">
+                        <div class="info-item">
+                            <div class="info-label">Data da Entrega</div>
+                            <div class="info-value">${formatarData(orcamento.dataEntrega)}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Condições de Pagamento</div>
+                            <div class="info-value">${orcamento.condicoesPagamento || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Garantia</div>
+                            <div class="info-value">${orcamento.garantia || '-'}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         `;
     });
 
     html += `
-            </tbody>
-        </table>
+        </div>
     `;
 
     return html;
@@ -413,15 +411,19 @@ function criarHtmlProduto(grupo) {
 function atualizarVisualizacaoSelecao(produtoId, orcamentoId) {
     // Remove seleção anterior
     document.querySelectorAll(`input[name="produto_${produtoId}"]`).forEach(radio => {
-        const row = radio.closest('tr');
-        row.classList.remove('selected');
+        const card = radio.closest('.orcamento-card');
+        if (card) {
+            card.classList.remove('selected');
+        }
     });
 
     // Adiciona seleção atual
     const radioSelecionado = document.querySelector(`input[name="produto_${produtoId}"][value="${orcamentoId}"]`);
     if (radioSelecionado) {
-        const row = radioSelecionado.closest('tr');
-        row.classList.add('selected');
+        const card = radioSelecionado.closest('.orcamento-card');
+        if (card) {
+            card.classList.add('selected');
+        }
     }
 }
 
@@ -553,7 +555,7 @@ function mostrarActionsDiv() {
 function mostrarSemDados() {
     orcamentosContainer.innerHTML = `
         <div class="no-data">
-            📝 Não há orçamentos pendentes de aprovação no momento.
+            Não há orçamentos pendentes de aprovação no momento.
         </div>
     `;
 }

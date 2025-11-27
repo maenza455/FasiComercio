@@ -15,7 +15,7 @@ import java.util.Set;
 @Repository
 public interface OrcamentoRepository extends JpaRepository<Orcamento, Long> {
     
-    @Query("SELECT o FROM Orcamento o WHERE o.status = 'Pendente'")
+    @Query("SELECT o FROM Orcamento o WHERE LOWER(TRIM(o.status)) = 'pendente'")
     List<Orcamento> findByStatusPendente();
     
     @Transactional
@@ -40,6 +40,6 @@ public interface OrcamentoRepository extends JpaRepository<Orcamento, Long> {
             @Param("status") String status
     );
     
-    @Query("SELECT o FROM Orcamento o WHERE o.fornecedor.id = :idFornecedor AND LOWER(o.status) = 'aprovado' AND o.dataEmissao IS NOT NULL AND o.dataEntrega IS NOT NULL ORDER BY o.dataEmissao DESC")
+    @Query("SELECT o FROM Orcamento o WHERE o.fornecedor.id = :idFornecedor AND LOWER(TRIM(o.status)) = 'aprovado' AND o.dataEmissao IS NOT NULL AND o.dataEntrega IS NOT NULL ORDER BY o.dataEmissao DESC LIMIT 100")
     List<Orcamento> findHistoricoFornecedor(@Param("idFornecedor") Integer idFornecedor);
 }

@@ -9,6 +9,9 @@
    VARIÁVEIS CSS - PALETA DE CORES
    ======================================== */
 :root {
+    /* Tipografia */
+    --font-size: 16px;
+    
     /* Cores principais */
     --azul-primary: #335e9e;
     --branco: #FFFFFF;

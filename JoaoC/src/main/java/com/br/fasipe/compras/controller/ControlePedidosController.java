@@ -24,20 +24,33 @@ public class ControlePedidosController {
     @GetMapping("/orcamentos/pendentes")
     public ResponseEntity<List<Map<String, Object>>> buscarOrcamentosPendentes() {
         try {
+            System.out.println("🔍 [CONTROLLER] Iniciando busca de orçamentos pendentes...");
             List<OrcamentoDTO> orcamentos = ordemDeCompraService.buscarOrcamentosPendentes();
+            System.out.println("✅ [CONTROLLER] Encontrados " + orcamentos.size() + " orçamentos pendentes");
             
             // Agrupa por produto e inclui análise temporal
+            System.out.println("🔍 [CONTROLLER] Agrupando orçamentos por produto...");
             Map<Integer, List<OrcamentoDTO>> orcamentosPorProduto = orcamentos.stream()
+                .filter(o -> o.getIdProduto() != null)
                 .collect(Collectors.groupingBy(OrcamentoDTO::getIdProduto));
+            System.out.println("✅ [CONTROLLER] Agrupados em " + orcamentosPorProduto.size() + " produtos");
             
             // Calcula análise histórica por fornecedor (uma vez para todos)
+            System.out.println("🔍 [CONTROLLER] Calculando análise histórica de fornecedores...");
             Map<Integer, AnaliseTemporalService.AnaliseTemporalDTO> analisesPorFornecedor = 
                 analiseTemporalService.analisarHistoricoFornecedores(orcamentos);
+            System.out.println("✅ [CONTROLLER] Análise concluída para " + analisesPorFornecedor.size() + " fornecedores");
             
             List<Map<String, Object>> resultado = new ArrayList<>();
             
+            System.out.println("🔍 [CONTROLLER] Processando grupos de produtos...");
             for (Map.Entry<Integer, List<OrcamentoDTO>> entry : orcamentosPorProduto.entrySet()) {
                 List<OrcamentoDTO> orcamentosDoProduto = entry.getValue();
+                
+                if (orcamentosDoProduto == null || orcamentosDoProduto.isEmpty()) {
+                    System.out.println("⚠️ [CONTROLLER] Produto com lista de orçamentos vazia, pulando...");
+                    continue;
+                }
                 
                 // Calcula análise temporal do produto (mantido para compatibilidade)
                 AnaliseTemporalService.AnaliseTemporalDTO analiseProduto = 
@@ -46,6 +59,11 @@ public class ControlePedidosController {
                 // Enriquecer cada orçamento com análise histórica do fornecedor
                 List<Map<String, Object>> orcamentosEnriquecidos = new ArrayList<>();
                 for (OrcamentoDTO orcamento : orcamentosDoProduto) {
+                    if (orcamento == null || orcamento.getIdFornecedor() == null) {
+                        System.out.println("⚠️ [CONTROLLER] Orçamento nulo ou sem fornecedor, pulando...");
+                        continue;
+                    }
+                    
                     Map<String, Object> orcamentoMap = new HashMap<>();
                     orcamentoMap.put("dadosOrcamento", orcamento);
                     
@@ -89,9 +107,13 @@ public class ControlePedidosController {
                 resultado.add(grupo);
             }
             
+            System.out.println("✅ [CONTROLLER] Processamento concluído! Retornando " + resultado.size() + " grupos de produtos");
             return ResponseEntity.ok(resultado);
             
         } catch (Exception e) {
+            System.err.println("❌ [CONTROLLER] ERRO ao carregar orçamentos: " + e.getClass().getName());
+            System.err.println("❌ [CONTROLLER] Mensagem: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }

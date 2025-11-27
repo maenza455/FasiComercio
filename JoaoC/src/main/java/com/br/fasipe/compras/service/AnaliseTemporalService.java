@@ -29,24 +29,41 @@ public class AnaliseTemporalService {
         Map<Integer, AnaliseTemporalDTO> analisesPorFornecedor = new HashMap<>();
         
         if (orcamentosAtuais == null || orcamentosAtuais.isEmpty()) {
+            System.out.println("⚠️ [ANALISE] Lista de orçamentos vazia ou nula");
             return analisesPorFornecedor;
         }
+        
+        System.out.println("🔍 [ANALISE] Iniciando análise de " + orcamentosAtuais.size() + " orçamentos");
         
         // Para cada fornecedor nos orçamentos atuais, buscar histórico completo
         for (OrcamentoDTO orcamento : orcamentosAtuais) {
             Integer idFornecedor = orcamento.getIdFornecedor();
             
-            if (idFornecedor != null && !analisesPorFornecedor.containsKey(idFornecedor)) {
-                // Buscar todos os orçamentos históricos deste fornecedor que já foram entregues
-                List<com.br.fasipe.compras.model.Orcamento> historicoEntidades = orcamentoRepository.findHistoricoFornecedor(idFornecedor);
-                List<OrcamentoDTO> historicoFornecedor = converterParaDTO(historicoEntidades);
-                
-                // Calcular análise temporal baseada no histórico
-                AnaliseTemporalDTO analise = calcularAnaliseHistorica(historicoFornecedor);
-                analisesPorFornecedor.put(idFornecedor, analise);
+            if (idFornecedor == null) {
+                System.out.println("⚠️ [ANALISE] Orçamento sem ID de fornecedor, pulando...");
+                continue;
+            }
+            
+            if (!analisesPorFornecedor.containsKey(idFornecedor)) {
+                System.out.println("🔍 [ANALISE] Buscando histórico do fornecedor ID: " + idFornecedor);
+                try {
+                    // Buscar todos os orçamentos históricos deste fornecedor que já foram entregues
+                    List<com.br.fasipe.compras.model.Orcamento> historicoEntidades = orcamentoRepository.findHistoricoFornecedor(idFornecedor);
+                    List<OrcamentoDTO> historicoFornecedor = converterParaDTO(historicoEntidades);
+                    System.out.println("✅ [ANALISE] Encontrados " + historicoFornecedor.size() + " registros históricos");
+                    
+                    // Calcular análise temporal baseada no histórico
+                    AnaliseTemporalDTO analise = calcularAnaliseHistorica(historicoFornecedor);
+                    analisesPorFornecedor.put(idFornecedor, analise);
+                } catch (Exception e) {
+                    System.err.println("❌ [ANALISE] Erro ao buscar histórico do fornecedor " + idFornecedor + ": " + e.getMessage());
+                    // Criar análise vazia em caso de erro
+                    analisesPorFornecedor.put(idFornecedor, new AnaliseTemporalDTO(0.0, 0.0, 0.0, false, 0, "Erro ao buscar histórico"));
+                }
             }
         }
         
+        System.out.println("✅ [ANALISE] Análise concluída para " + analisesPorFornecedor.size() + " fornecedores");
         return analisesPorFornecedor;
     }
     
