@@ -74,20 +74,20 @@ body {
 
 .menu-item {
     display: block;
-    padding: 12px 25px;
+    padding: 12px;
     color: #335e9e;
     text-decoration: none;
     font-weight: 500;
     font-size: 1em;
-    background-color: transparent;
-    margin: 0 12px 12px 12px;
+    background-color: #d9d9d9;
+    margin: 0 0 12px 0;
     border-radius: 20px;
     transition: all 0.2s ease;
 }
 
 .menu-item:hover {
-    background-color: #d9d9d9;
-    color: #333333;
+    background-color: #335e9e;
+    color: #ffffff;
 }
 
 .menu-item.active {
