@@ -338,13 +338,30 @@ body {
 /* Info Badges Compactos */
 .info-badge {
     background-color: #f4f4f4;
-    padding: 6px 8px;
+    padding: 8px 10px;
     border-radius: 4px;
     font-size: 0.78em;
     color: #333;
     border: 1px solid #d9d9d9;
-    white-space: nowrap;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 80px;
+}
+
+.info-label {
+    color: #335e9e;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.info-value {
+    color: #333;
+    font-weight: 400;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }

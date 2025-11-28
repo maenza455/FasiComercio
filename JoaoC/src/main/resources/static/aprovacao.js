@@ -346,12 +346,30 @@ function criarHtmlProduto(grupo) {
                     </div>
                     
                     <div class="info-fields">
-                        <span class="info-badge"><strong>Valor Unit:</strong> R$ ${formatarMoeda(orcamento.precoCompra)}</span>
-                        <span class="info-badge"><strong>Qtd:</strong> ${orcamento.quantidade}</span>
-                        <span class="info-badge"><strong>Total:</strong> R$ ${formatarMoeda(orcamento.valorTotal)}</span>
-                        <span class="info-badge"><strong>Entrega:</strong> ${formatarData(orcamento.dataEntrega)}</span>
-                        <span class="info-badge"><strong>Pagto:</strong> ${orcamento.condicoesPagamento || '-'}</span>
-                        <span class="info-badge"><strong>Garantia:</strong> ${orcamento.garantia || '-'}</span>
+                        <div class="info-badge">
+                            <div class="info-label">Valor Unit</div>
+                            <div class="info-value">R$ ${formatarMoeda(orcamento.precoCompra)}</div>
+                        </div>
+                        <div class="info-badge">
+                            <div class="info-label">Qtd</div>
+                            <div class="info-value">${orcamento.quantidade}</div>
+                        </div>
+                        <div class="info-badge">
+                            <div class="info-label">Total</div>
+                            <div class="info-value">R$ ${formatarMoeda(orcamento.valorTotal)}</div>
+                        </div>
+                        <div class="info-badge">
+                            <div class="info-label">Entrega</div>
+                            <div class="info-value">${formatarData(orcamento.dataEntrega)}</div>
+                        </div>
+                        <div class="info-badge">
+                            <div class="info-label">Pagto</div>
+                            <div class="info-value">${orcamento.condicoesPagamento || '-'}</div>
+                        </div>
+                        <div class="info-badge">
+                            <div class="info-label">Garantia</div>
+                            <div class="info-value">${orcamento.garantia || '-'}</div>
+                        </div>
                     </div>
                 </div>
             </div>
