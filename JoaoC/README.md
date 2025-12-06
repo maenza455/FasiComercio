@@ -21,7 +21,7 @@
 
 ## 🎯 Sobre o Projeto
 
-O **FasiComercio - Sistema de Ordem de Compra** é uma aplicação backend desenvolvida em Java com Spring Boot para gerenciar todo o fluxo de ordens de compra de forma centralizada e eficiente. O sistema permite o cadastro, acompanhamento e aprovação de pedidos de compra, integrando diferentes setores da empresa (gerentes, diretores, administrativo) e facilitando o fluxo de compras.
+O **FasiComercio - Sistema de Ordem de Compra** é uma aplicação backend desenvolvida em Java com Spring Boot para gerenciar todo o fluxo de ordens de compra de forma centralizada e eficiente. O sistema permite a aprovação de orçamentos.
 
 Este projeto foi desenvolvido seguindo as melhores práticas de APIs REST, garantindo uma comunicação padronizada, segura e eficiente.
 
@@ -29,12 +29,7 @@ Este projeto foi desenvolvido seguindo as melhores práticas de APIs REST, garan
 
 ## ✨ Funcionalidades
 
-- ✅ Cadastro e consulta de pedidos de compra
-- ✅ Aprovação de pedidos por múltiplos usuários/grupos
-- ✅ Cadastro de produtos e fornecedores
-- ✅ Controle de status dos pedidos (em análise, aprovado, rejeitado, etc.)
-- ✅ Gestão de usuários e grupos de aprovadores
-- ✅ Relatórios e histórico de ordens de compra
+- ✅ Aprovação de orçamentos por usuários/grupos
 - ✅ Interface web para consulta e aprovação de pedidos
 - ✅ API RESTful para integração com sistemas externos
 
@@ -140,4 +135,4 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo LICENSE para d
 
 ---
 
-**Desenvolvido por:** Fasipe - Projeto de Controle de Ordens de Compra (Branch: feature/joao-controle-pedido)
+**Desenvolvido por: João Carlos Almeida - Projeto de Controle de Ordens de Compra (Branch: feature/joao-controle-pedido)
